@@ -56,6 +56,7 @@ export default defineConfig([
       react: {
         version: 'detect',
       },
+      'import/internal-regex': '^@(components|pages|hooks|types|lib|libs)(/|$)',
     },
     rules: {
       curly: ['error', 'all'],
@@ -98,7 +99,17 @@ export default defineConfig([
             caseInsensitive: true,
             order: 'asc',
           },
+          distinctGroup: false,
           groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index'], 'type'],
+          pathGroups: [
+            { pattern: '@components/**', group: 'internal', position: 'after' },
+            { pattern: '@pages/**', group: 'internal', position: 'after' },
+            { pattern: '@hooks/**', group: 'internal', position: 'after' },
+            { pattern: '@types/**', group: 'internal', position: 'after' },
+            { pattern: '@lib/**', group: 'internal', position: 'after' },
+            { pattern: '@libs/**', group: 'internal', position: 'after' },
+          ],
+          pathGroupsExcludedImportTypes: ['builtin', 'external'],
           'newlines-between': 'always',
         },
       ],

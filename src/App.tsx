@@ -1,30 +1,24 @@
-import { useState } from 'react'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import AppLayout from "@components/layout/AppLayout";
+import DashboardPage from "@pages/dashboard/DashboardPage";
+import TeamsPage from "@pages/teams/TeamsPages";
 
-function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <section id="center">
-      <div className="hero">
-        <img src={heroImg} className="base" width="170" height="179" alt="" />
-        <img src={reactLogo} className="framework" alt="React logo" />
-        <img src={viteLogo} className="vite" alt="Vite logo" />
-      </div>
-      <div>
-        <h1>Get started</h1>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-        </p>
-      </div>
-      <button className="counter" onClick={() => setCount((count) => count + 1)}>
-        Count is {count}
-      </button>
-    </section>
-  )
-}
+const queryClient = new QueryClient();
 
-export default App
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+     <BrowserRouter>
+        <AppLayout>
+          <Routes>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/teams" element={<TeamsPage />} />
+          </Routes>
+        </AppLayout>
+      </BrowserRouter>
+  </QueryClientProvider>
+);
+
+export default App;

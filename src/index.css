@@ -1,1 +1,80 @@
 @import 'tailwindcss';
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-foreground: var(--ink);
+  --color-muted: var(--muted);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-stroke: var(--stroke);
+  --color-inverse: var(--inverse);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-secondary-dark: var(--secondary-dark);
+  --font-sans: var(--font-inter, 'Inter');
+  --font-mono: var(--font-fira-code, 'Fira Code');
+}
+
+:root {
+  color-scheme: light;
+
+  --canvas: #f5f7fb;
+  --surface: #ffffff;
+  --ink: #0f172a;
+  --muted: #475569;
+  --success: #00a83f;
+  --warning: #f3a000;
+  --error: #eb5757;
+  --stroke: #dbe2ea;
+  --inverse: #0f172a;
+  --primary: #ff0046;
+  --primary-dark: #c80037;
+  --secondary: #0f2d37;
+  --secondary-dark: #00141e;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --canvas: #4395c1;
+  --surface: #171717;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --success: #19ebb6;
+  --warning: #f2c94c;
+  --error: #eb5757;
+  --stroke: #262626;
+  --inverse: #ffffff;
+  --primary: #ff0046;
+  --primary-dark: #c80037;
+  --secondary: #12303a;
+  --secondary-dark: #08161d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    color-scheme: dark;
+    --canvas: #010a0f;
+    --surface: #171717;
+    --ink: #f8fafc;
+    --muted: #94a3b8;
+    --success: #19ebb6;
+    --warning: #f2c94c;
+    --error: #eb5757;
+    --stroke: #262626;
+    --inverse: #ffffff;
+    --primary: #ff0046;
+    --primary-dark: #c80037;
+    --secondary: #12303a;
+    --secondary-dark: #08161d;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans), var(--font-mono), Arial, Helvetica, sans-serif;
+}
