@@ -1,4 +1,4 @@
-import { Box, Container, Section } from "@radix-ui/themes";
+import { Box, Container } from "@radix-ui/themes";
 
 import BottomNav from "@components/layout/BottomNav";
 
