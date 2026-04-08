@@ -33,7 +33,7 @@
   --primary: #ff0046;
   --primary-dark: #c80037;
   --secondary: #0f2d37;
-  --secondary-dark: #00141e;
+  --secondary-dark: #01080b;
 }
 
 :root.dark {
@@ -50,13 +50,13 @@
   --primary: #ff0046;
   --primary-dark: #c80037;
   --secondary: #12303a;
-  --secondary-dark: #08161d;
+  --secondary-dark: #01080b;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
     color-scheme: dark;
-    --canvas: #010a0f;
+    --canvas: #000304;
     --surface: #171717;
     --ink: #f8fafc;
     --muted: #94a3b8;
@@ -68,7 +68,7 @@
     --primary: #ff0046;
     --primary-dark: #c80037;
     --secondary: #12303a;
-    --secondary-dark: #08161d;
+    --secondary-dark: #01080b;
   }
 }
 

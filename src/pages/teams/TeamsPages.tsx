@@ -1,30 +1,44 @@
-import { Community, Plus } from '@boxicons/react'
-import { Box, Text, Heading, Flex } from '@radix-ui/themes/dist/cjs/components/index.js'
+import { useState } from 'react'
 
-import { Button } from '@/components/ui/Button'
+import { TeamsList } from './TeamsList'
+
+import type { ITeam } from '@/types'
+
+import { HeaderSections, EmptyState } from '@/components/common'
 
 export default function TeamsPage() {
-  return (
-    <Box className="animate-fade-in">
-      <Flex justify="between" align="center">
-        <Box>
-          <Heading as="h3" size="5">
-            Mis Equipos
-          </Heading>
-          <Text size="1">2 equipos registrados</Text>
-        </Box>
-        <Button>
-          <Plus size="sm" />
-          Agregar
-        </Button>
-      </Flex>
+  const [teams, setTeams] = useState<ITeam[]>([
+    {
+      id: '1',
+      name: 'Barcelona',
+      logo: 'https://static.flashscore.com/res/image/data/8dhw5vxS-fcDVLdrL.png',
+      won: 3,
+      lost: 0,
+      bets: 3,
+    },
+    {
+      id: '2',
+      name: 'Atletico de Madrid',
+      logo: 'https://static.flashscore.com/res/image/data/CjfjIsYg-GhHiNvXF.png',
+      won: 1,
+      lost: 0,
+      bets: 1,
+    },
+    {
+      id: '3',
+      name: 'Atletico de Madrid',
+      logo: 'https://static.flashscore.com/res/image/data/CjfjIsYg-GhHiNvXF.png',
+      won: 1,
+      lost: 0,
+      bets: 1,
+    },
+  ])
 
-      <Flex className="border-secondary-dark border rounded-2xl my-20 h-40">
-        <Flex justify="center" direction="column" align="center" className='text-secondary'>
-          <Community size="lg" />
-          <p className="text-muted-foreground text-sm">Agrega tu primer equipo favorito</p>
-        </Flex>
-      </Flex>
-    </Box>
+  return (
+    <div className="animate-fade-in flex flex-col">
+      <HeaderSections title="Mis Equipos" description={`${teams.length} equipos registrados`} />
+      {teams.length === 0 && <EmptyState text="Agrega tu primer equipo" />}
+      {teams.length > 0 && <TeamsList teams={teams} />}
+    </div>
   )
 }
