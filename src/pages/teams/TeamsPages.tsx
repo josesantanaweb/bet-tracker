@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { TeamForm } from './TeamForm'
 import { TeamsList } from './TeamsList'
 import { TeamsSkeleton } from './TeamsSkeleton'
 
@@ -12,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui'
-import { useTeams } from '@/hooks/useTeams'
+import { useTeams } from '@/hooks'
 
 export default function TeamsPage() {
   const { data: teams = [], isLoading, isError } = useTeams()
@@ -23,7 +24,7 @@ export default function TeamsPage() {
   return (
     <div className="animate-fade-in flex flex-col">
       <HeaderSections
-        title="Mis Equipos"
+        title="TeamForm"
         description={`${teams.length} equipos registrados`}
         onAdd={handleAdd}
       />
@@ -32,8 +33,11 @@ export default function TeamsPage() {
           <DialogClose aria-label="Cerrar modal" />
           <DialogHeader>
             <DialogTitle>Nuevo Equipo</DialogTitle>
-            <DialogDescription>hola</DialogDescription>
+            <DialogDescription>
+              Completa los datos para registrar un nuevo equipo.
+            </DialogDescription>
           </DialogHeader>
+          <TeamForm onSuccess={() => setIsDialogOpen(false)} />
         </DialogContent>
       </Dialog>
       {isLoading && <TeamsSkeleton />}

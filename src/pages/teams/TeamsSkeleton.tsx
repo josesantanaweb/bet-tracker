@@ -4,7 +4,7 @@ export const TeamsSkeleton = () => {
   return (
     <div className="grid grid-cols-2 items-center gap-3 py-8">
       {skeletonIds.map((id) => (
-        <div key={id} className="relative h-28 rounded-xl skeleton-shimmer" />
+        <div key={id} className="skeleton-shimmer relative h-28 rounded-xl" />
       ))}
     </div>
   )

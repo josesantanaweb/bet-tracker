@@ -131,7 +131,10 @@ const DialogContent = ({ className, children, maxWidth, ...props }: DialogConten
             <div
               role="dialog"
               aria-modal="true"
-              className={cn('relative w-full rounded-2xl bg-secondary-dark p-6 shadow-2xl min-w-102.5', className)}
+              className={cn(
+                'bg-secondary-dark relative w-full min-w-102.5 rounded-2xl p-6 shadow-2xl',
+                className,
+              )}
               style={maxWidth ? { maxWidth } : undefined}
               {...props}
             >
@@ -166,7 +169,7 @@ const DialogClose = ({ className, children, onClick, ...props }: DialogCloseProp
     <button
       type="button"
       className={cn(
-        'absolute right-3 top-3 cursor-pointer rounded-full p-1 text-white/80 transition-colors hover:bg-white/10 hover:text-white',
+        'absolute top-3 right-3 cursor-pointer rounded-full p-1 text-white/80 transition-colors hover:bg-white/10 hover:text-white',
         className,
       )}
       onClick={(event) => {

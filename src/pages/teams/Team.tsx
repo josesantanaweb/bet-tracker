@@ -1,4 +1,4 @@
-import { Trophy, TrendingDown, Trash } from '@boxicons/react'
+import { Trophy, TrendingDown, Trash, Edit } from '@boxicons/react'
 
 import type { ITeam } from '@/types'
 
@@ -8,7 +8,7 @@ interface TeamProps {
 
 export const Team = ({ team }: TeamProps) => {
   return (
-    <div className="bg-secondary-dark flex items-center justify-between rounded-xl p-4 relative">
+    <div className="bg-secondary-dark relative flex items-center justify-between rounded-xl p-4">
       <div className="gap- flex w-full flex-col items-center justify-center">
         <div className="flex w-full flex-col items-center gap-2">
           <div className="h-8 w-8">
@@ -27,9 +27,20 @@ export const Team = ({ team }: TeamProps) => {
           </div>
         </div>
       </div>
-      <button type="button" className="text-red-600 cursor-pointer text-sm absolute top-2 right-2">
-        <Trash className="w-4 h-4" />
-      </button>
+      <div className="flex items-center gap-1 absolute top-2 right-2 ">
+        <button
+          type="button"
+          className="cursor-pointer text-sm text-yellow-600"
+        >
+          <Edit className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          className="cursor-pointer text-sm text-red-600"
+        >
+          <Trash className="h-4 w-4" />
+        </button>
+      </div>
     </div>
   )
 }

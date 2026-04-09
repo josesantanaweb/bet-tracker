@@ -4,6 +4,8 @@ import type { ITeam } from '@/types'
 
 import { supabase } from '@/libs/supabase'
 
+export const teamsQueryKey = ['teams']
+
 const fetchTeams = async (): Promise<ITeam[]> => {
   const { data, error } = await supabase
     .from('team')
@@ -30,7 +32,7 @@ const fetchTeams = async (): Promise<ITeam[]> => {
 
 export const useTeams = () => {
   return useQuery({
-    queryKey: ['teams'],
+    queryKey: teamsQueryKey,
     queryFn: fetchTeams,
   })
 }

@@ -10,8 +10,8 @@ const tabs = [
 
 export const BottomNav = () => {
   return (
-    <div className="safe-area-bottom bg-secondary-dark h-15 fixed right-0 bottom-0 left-0 z-50">
-      <div className="flex items-center h-full">
+    <div className="safe-area-bottom bg-secondary-dark fixed right-0 bottom-0 left-0 z-50 h-15">
+      <div className="flex h-full items-center">
         {tabs.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
@@ -24,9 +24,7 @@ export const BottomNav = () => {
             }
           >
             <Icon size="sm" />
-            <p className="text-xs">
-              {label}
-            </p>
+            <p className="text-xs">{label}</p>
           </NavLink>
         ))}
       </div>
