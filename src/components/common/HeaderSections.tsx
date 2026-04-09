@@ -1,5 +1,4 @@
 import { Plus } from '@boxicons/react'
-import { Text, Heading } from '@radix-ui/themes/dist/cjs/components/index.js'
 
 import { Button } from '@/components/ui'
 
@@ -13,10 +12,10 @@ export const HeaderSections = ({ title, description, onAdd }: HeaderSectionsProp
   return (
     <div className="flex items-center justify-between">
       <div>
-        <Heading as="h3" size="5">
+        <h3 className="text-lg font-semibold text-ink">
           {title}
-        </Heading>
-        <Text size="1">{description}</Text>
+        </h3>
+        <p className="text-sm text-ink">{description}</p>
       </div>
       <Button onClick={onAdd}>
         <Plus size="sm" />
@@ -25,5 +24,3 @@ export const HeaderSections = ({ title, description, onAdd }: HeaderSectionsProp
     </div>
   )
 }
-
-HeaderSections.displayName = 'HeaderSections'

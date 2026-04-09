@@ -4,5 +4,4 @@ export interface ITeam {
   logo: string
   won: number
   lost: number
-  bets: number
 }

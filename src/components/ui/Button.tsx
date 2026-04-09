@@ -1,4 +1,3 @@
-import { Slot } from "@radix-ui/themes/dist/cjs/components/index.js";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
@@ -29,12 +28,26 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  children?: React.ReactNode;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
-    return <Comp className={cn(buttonVariants({ variant, className }))} ref={ref} {...props} />;
+  ({ className, variant, asChild = false, children, ...props }, ref) => {
+    const classes = cn(buttonVariants({ variant, className }));
+
+    if (asChild && React.isValidElement(children)) {
+      const child = children as React.ReactElement<{ className?: string }>;
+      return React.cloneElement(child, {
+        ...props,
+        className: cn(classes, child.props.className),
+      });
+    }
+
+    return (
+      <button className={classes} ref={ref} {...props}>
+        {children}
+      </button>
+    );
   },
 );
 

@@ -14,5 +14,3 @@ export const EmptyState = ({ text }: EmptyStateProps) => {
     </div>
   )
 }
-
-EmptyState.displayName = "EmptyState";

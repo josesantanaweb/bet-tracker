@@ -1,2 +1,2 @@
-export * from './empty-state/EmptyState';
-export * from './header-sections/HeaderSections';
+export * from './EmptyState';
+export * from './HeaderSections';

@@ -1,5 +1,4 @@
 import { Community, Dashboard } from '@boxicons/react'
-import { Text } from '@radix-ui/themes'
 import { NavLink } from 'react-router-dom'
 
 const tabs = [
@@ -9,9 +8,9 @@ const tabs = [
   { to: '/bets', icon: Community, label: 'Apuestas' },
 ]
 
-export default function BottomNav() {
+export const BottomNav = () => {
   return (
-    <div className="border-secondary safe-area-bottom bg-secondary-dark h-15 fixed right-0 bottom-0 left-0 z-50 border-t">
+    <div className="safe-area-bottom bg-secondary-dark h-15 fixed right-0 bottom-0 left-0 z-50">
       <div className="flex items-center h-full">
         {tabs.map(({ to, icon: Icon, label }) => (
           <NavLink
@@ -25,9 +24,9 @@ export default function BottomNav() {
             }
           >
             <Icon size="sm" />
-            <Text size="1" weight="medium">
+            <p className="text-xs">
               {label}
-            </Text>
+            </p>
           </NavLink>
         ))}
       </div>
