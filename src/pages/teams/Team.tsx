@@ -1,4 +1,6 @@
-import { Trophy, TrendingDown, Trash, Edit } from '@boxicons/react'
+import { Trophy, TrendingDown } from '@boxicons/react'
+
+import { DropdownActions } from '@components/common/DropdownActions'
 
 import type { ITeam } from '@/types'
 
@@ -7,9 +9,15 @@ interface TeamProps {
 }
 
 export const Team = ({ team }: TeamProps) => {
+  const handleEdit = () => console.log('2312')
+  const handleDelete = () => console.log('2312')
+
   return (
     <div className="bg-secondary-dark relative flex items-center justify-between rounded-xl p-4">
-      <div className="gap- flex w-full flex-col items-center justify-center">
+      <div className="absolute top-2 right-1">
+        <DropdownActions onEdit={handleEdit} onDelete={handleDelete} />
+      </div>
+      <div className="flex w-full flex-col items-center justify-center gap-3">
         <div className="flex w-full flex-col items-center gap-2">
           <div className="h-8 w-8">
             <img src={team.logo} alt={team.name} className="h-full w-full object-cover" />
@@ -26,20 +34,6 @@ export const Team = ({ team }: TeamProps) => {
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex items-center gap-1 absolute top-2 right-2 ">
-        <button
-          type="button"
-          className="cursor-pointer text-sm text-yellow-600"
-        >
-          <Edit className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          className="cursor-pointer text-sm text-red-600"
-        >
-          <Trash className="h-4 w-4" />
-        </button>
       </div>
     </div>
   )
