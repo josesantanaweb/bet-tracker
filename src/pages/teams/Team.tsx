@@ -6,16 +6,15 @@ import type { ITeam } from '@/types'
 
 interface TeamProps {
   team: ITeam
+  onEdit: () => void
+  onDelete: () => void
 }
 
-export const Team = ({ team }: TeamProps) => {
-  const handleEdit = () => console.log('2312')
-  const handleDelete = () => console.log('2312')
-
+export const Team = ({ team, onEdit, onDelete }: TeamProps) => {
   return (
     <div className="bg-secondary-dark relative flex items-center justify-between rounded-xl p-4">
       <div className="absolute top-2 right-1">
-        <DropdownActions onEdit={handleEdit} onDelete={handleDelete} />
+        <DropdownActions onEdit={onEdit} onDelete={onDelete} />
       </div>
       <div className="flex w-full flex-col items-center justify-center gap-3">
         <div className="flex w-full flex-col items-center gap-2">

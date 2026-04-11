@@ -1,39 +1,59 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { useEffect } from 'react'
+import { type Resolver, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import type { ICreateTeam, ITeam } from '@/types'
+
 import { Button, Input } from '@/components/ui'
-import { useCreateTeam } from '@/hooks'
+import { useCreateTeam, useUpdateTeam } from '@/hooks'
 
 const newTeamSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(60, 'Nombre muy largo'),
   logo: z.string().url('Ingresa una URL valida para el logo'),
 })
 
-type TeamFormValues = z.infer<typeof newTeamSchema>
-
 interface TeamFormProps {
+  team?: ITeam
   onSuccess?: () => void
 }
 
-export const TeamForm = ({ onSuccess }: TeamFormProps) => {
-  const { mutateAsync, isPending, isError, error } = useCreateTeam()
+export const TeamForm = ({ team, onSuccess }: TeamFormProps) => {
+  const isEdit = Boolean(team)
+  const createMutation = useCreateTeam()
+  const updateMutation = useUpdateTeam()
+
+  const isPending = isEdit ? updateMutation.isPending : createMutation.isPending
+  const isError = isEdit ? updateMutation.isError : createMutation.isError
+  const error = isEdit ? updateMutation.error : createMutation.error
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<TeamFormValues>({
-    resolver: zodResolver(newTeamSchema),
+  } = useForm<ICreateTeam>({
+    resolver: zodResolver(newTeamSchema) as Resolver<ICreateTeam>,
     defaultValues: {
       name: '',
       logo: '',
     },
   })
 
-  const onSubmit = async (values: TeamFormValues) => {
-    await mutateAsync(values)
+  useEffect(() => {
+    if (team) {
+      reset({ name: team.name, logo: team.logo })
+    } else {
+      reset({ name: '', logo: '' })
+    }
+  }, [team, reset])
+
+  const onSubmit = async (values: ICreateTeam) => {
+    if (team) {
+      await updateMutation.mutateAsync({ id: team.id, ...values })
+    } else {
+      await createMutation.mutateAsync(values)
+    }
     reset()
     onSuccess?.()
   }
@@ -52,12 +72,18 @@ export const TeamForm = ({ onSuccess }: TeamFormProps) => {
 
       {isError && (
         <p className="text-xs text-red-500">
-          {error instanceof Error ? error.message : 'Error al crear equipo'}
+          {error instanceof Error
+            ? error.message
+            : isEdit
+              ? 'Error al actualizar el equipo'
+              : 'Error al crear equipo'}
         </p>
       )}
 
       <Button type="submit" disabled={isPending}>
-        {isPending ? 'Creando...' : 'Crear equipo'}
+        {isEdit
+          ? 'Guardar cambios'
+          : 'Crear equipo'}
       </Button>
     </form>
   )
