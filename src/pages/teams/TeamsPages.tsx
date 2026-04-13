@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { TeamsList } from './TeamsList'
+import { Teams } from './Teams'
 import { TeamsSkeleton } from './TeamsSkeleton'
 import { TeamUpsertDialog } from './TeamUpsertDialog'
 
@@ -9,7 +9,7 @@ import type { ITeam } from '@/types'
 import { HeaderSections, EmptyState } from '@/components/common'
 import { useDeleteTeam, useTeams } from '@/hooks'
 
-export default function TeamsPage() {
+export const TeamsPage = () => {
   const { data: teams = [], isLoading, isError } = useTeams()
   const { mutateAsync: deleteTeam } = useDeleteTeam()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -44,7 +44,7 @@ export default function TeamsPage() {
     <div className="animate-fade-in flex flex-col">
       <HeaderSections
         title="Equipos"
-        description={`${teams.length} equipos registrados`}
+        description={`${teams.length} equipos`}
         onAdd={handleAdd}
       />
       <TeamUpsertDialog open={isDialogOpen} onOpenChange={handleDialogOpenChange} team={teamToEdit} />
@@ -56,7 +56,7 @@ export default function TeamsPage() {
         <EmptyState text="Agrega tu primer equipo" />
       )}
       {!isLoading && !isError && teams.length > 0 && (
-        <TeamsList teams={teams} onEditTeam={handleEditTeam} onDeleteTeam={handleDeleteTeam} />
+        <Teams teams={teams} onEditTeam={handleEditTeam} onDeleteTeam={handleDeleteTeam} />
       )}
     </div>
   )

@@ -21,7 +21,7 @@ export const Team = ({ team, onEdit, onDelete }: TeamProps) => {
           <div className="h-8 w-8">
             <img src={team.logo} alt={team.name} className="h-full w-full object-cover" />
           </div>
-          <h6 className="text-sm font-semibold text-white">{team.name}</h6>
+          <h6 className="text-sm text-white">{team.name}</h6>
           <div className="flex items-center gap-2">
             <div className="text-success flex items-center gap-1">
               <Trophy className="h-3 w-3" />

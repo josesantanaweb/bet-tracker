@@ -3,7 +3,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { AppLayout } from '@components/layout'
 import DashboardPage from '@pages/dashboard/DashboardPage'
-import TeamsPage from '@pages/teams/TeamsPages'
+import { MatchesPage } from '@pages/matches/MatchesPages'
+import { TeamsPage } from '@pages/teams/TeamsPages'
 
 const queryClient = new QueryClient()
 
@@ -14,6 +15,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/teams" element={<TeamsPage />} />
+          <Route path="/matches" element={<MatchesPage />} />
         </Routes>
       </AppLayout>
     </BrowserRouter>
