@@ -4,7 +4,7 @@ import { teamsQueryKey } from './useTeams'
 
 import type { ICreateTeam } from '@/types'
 
-import { supabase } from '@/libs/supabase'
+import { supabase } from '@/lib/supabase'
 
 
 interface IUpdateTeamPayload extends ICreateTeam {

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { teamsQueryKey } from './useTeams'
 
-import { supabase } from '@/libs/supabase'
+import { supabase } from '@/lib/supabase'
 
 
 const parseTeamId = (teamId: string) => {

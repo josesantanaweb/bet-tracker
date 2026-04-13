@@ -99,3 +99,64 @@ body {
   animation: skeleton-shimmer 2.2s ease-in-out infinite;
   will-change: background-position;
 }
+
+.match-datepicker-input {
+  width: 100%;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--stroke);
+  background: transparent;
+  color: var(--ink);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.match-datepicker-input:focus {
+  border-color: color-mix(in srgb, var(--primary) 65%, var(--stroke));
+}
+
+.match-datepicker-input::placeholder {
+  color: var(--muted);
+}
+
+.match-datepicker-popper {
+  z-index: 60;
+}
+
+.match-datepicker-calendar {
+  border: 1px solid var(--stroke) !important;
+  border-radius: 0.9rem !important;
+  background: var(--secondary-dark) !important;
+  box-shadow: 0 20px 40px color-mix(in srgb, black 55%, transparent);
+  font-family: var(--font-sans), sans-serif;
+}
+
+.match-datepicker-calendar .react-datepicker__header {
+  background: var(--secondary) !important;
+  border-bottom: 1px solid var(--stroke) !important;
+}
+
+.match-datepicker-calendar .react-datepicker__current-month,
+.match-datepicker-calendar .react-datepicker__day-name,
+.match-datepicker-calendar .react-datepicker__day,
+.match-datepicker-calendar .react-datepicker__time-name {
+  color: var(--ink) !important;
+}
+
+.match-datepicker-calendar .react-datepicker__day:hover {
+  background: color-mix(in srgb, var(--secondary) 70%, transparent) !important;
+  border-radius: 0.45rem;
+}
+
+.match-datepicker-calendar .react-datepicker__day--selected,
+.match-datepicker-calendar .react-datepicker__day--keyboard-selected {
+  background: var(--primary-dark) !important;
+  color: var(--inverse) !important;
+  border-radius: 0.45rem;
+}
+
+.match-datepicker-calendar .react-datepicker__navigation-icon::before {
+  border-color: var(--ink) !important;
+}

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import type { ITeam } from '@/types'
 
-import { supabase } from '@/libs/supabase'
+import { supabase } from '@/lib/supabase'
 
 export const teamsQueryKey = ['teams']
 

@@ -4,7 +4,7 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import { cn } from '@/libs/cn'
+import { cn } from '@/lib/cn'
 
 type DialogContextValue = {
   open: boolean
@@ -157,7 +157,7 @@ const DialogTitle = ({ className, ...props }: DialogTitleProps) => {
 type DialogDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>
 
 const DialogDescription = ({ className, ...props }: DialogDescriptionProps) => {
-  return <p className={cn('text-sm text-white/75', className)} {...props} />
+  return <p className={cn('text-xs text-white/75', className)} {...props} />
 }
 
 type DialogCloseProps = React.ButtonHTMLAttributes<HTMLButtonElement>
@@ -186,7 +186,7 @@ const DialogClose = ({ className, children, onClick, ...props }: DialogCloseProp
 }
 
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
-  return <div className={cn('flex flex-col gap-1.5', className)} {...props} />
+  return <div className={cn('flex flex-col mb-6', className)} {...props} />
 }
 
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
