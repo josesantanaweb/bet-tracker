@@ -5,9 +5,14 @@ import { Controller, type Resolver, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import 'react-datepicker/dist/react-datepicker.css'
 
-import { formatDateValue, parseDateValue } from './dateUtils'
+import {
+  formatDateValue,
+  formatMatchDateValue,
+  formatMatchTimeValue,
+  parseDateValue,
+} from './dateUtils'
 
-import type { ICreateMatch, IMatch } from '@/types'
+import type { ICreateMatch, IMatch, ITeam } from '@/types'
 
 import { Button, Input, Select } from '@/components/ui'
 import { useTeams } from '@/hooks'
@@ -32,13 +37,28 @@ const newMatchSchema = z
 
 type MatchFormValues = z.infer<typeof newMatchSchema>
 
+const EMPTY_TEAMS: ITeam[] = []
+
+const defaultMatchFormValues: MatchFormValues = {
+  date: '',
+  time: '',
+  homeTeamId: '',
+  awayTeamId: '',
+  winnerHome: 1.5,
+  winnerAway: 1.5,
+  teamWinHalfHome: 1.5,
+  teamWinHalfAway: 1.5,
+  teamScoreHalfHome: 1.5,
+  teamScoreHalfAway: 1.5,
+}
+
 interface MatchFormProps {
   match?: IMatch
   onSuccess?: () => void
 }
 
 export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
-  const { data: teams = [], isLoading: isLoadingTeams } = useTeams()
+  const { data: teams = EMPTY_TEAMS, isLoading: isLoadingTeams } = useTeams()
   const teamOptions = teams.map((team) => ({ value: team.id, label: team.name }))
 
   const {
@@ -50,18 +70,7 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
     formState: { errors },
   } = useForm<MatchFormValues>({
     resolver: zodResolver(newMatchSchema) as Resolver<MatchFormValues>,
-    defaultValues: {
-      date: '',
-      time: '',
-      homeTeamId: '',
-      awayTeamId: '',
-      winnerHome: 1.5,
-      winnerAway: 1.5,
-      teamWinHalfHome: 1.5,
-      teamWinHalfAway: 1.5,
-      teamScoreHalfHome: 1.5,
-      teamScoreHalfAway: 1.5,
-    },
+    defaultValues: defaultMatchFormValues,
   })
 
   useEffect(() => {
@@ -74,8 +83,9 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
       const teamScoreHalf = match.markets.find((market) => market.id === 'team-score-over-05')
 
       reset({
-        date: match.date,
-        time: match.time,
+        ...defaultMatchFormValues,
+        date: formatMatchDateValue(match.date),
+        time: formatMatchTimeValue(match.date),
         homeTeamId: homeTeam?.id ?? '',
         awayTeamId: awayTeam?.id ?? '',
         winnerHome: winner?.odds.home ?? 1.5,
@@ -86,18 +96,7 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
         teamScoreHalfAway: teamScoreHalf?.odds.away ?? 1.5,
       })
     } else {
-      reset({
-        date: '',
-        time: '',
-        homeTeamId: '',
-        awayTeamId: '',
-        winnerHome: 1.5,
-        winnerAway: 1.5,
-        teamWinHalfHome: 1.5,
-        teamWinHalfAway: 1.5,
-        teamScoreHalfHome: 1.5,
-        teamScoreHalfAway: 1.5,
-      })
+      reset(defaultMatchFormValues)
     }
   }, [match, reset, teams])
 
@@ -125,7 +124,6 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
         logo: awayTeam.logo,
       },
       date: values.date,
-      time: values.time,
       markets: [
         {
           id: 'winner',
@@ -155,7 +153,7 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
     }
 
     void _payload
-    reset()
+    reset(defaultMatchFormValues)
     onSuccess?.()
   }
 

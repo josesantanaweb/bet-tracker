@@ -2,6 +2,8 @@ import { ChevronDown } from '@boxicons/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 
+import { formatMatchDate, formatMatchTime } from './dateUtils'
+
 import type { IMatch } from '@/types'
 
 interface MatchProps {
@@ -12,10 +14,8 @@ interface MatchProps {
 
 export const Match = ({ match, onEdit: _onEdit, onDelete: _onDelete }: MatchProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const formattedDate = new Intl.DateTimeFormat('es-ES', {
-    day: 'numeric',
-    month: 'long',
-  }).format(new Date(`${match.date}T00:00:00`))
+  const formattedDate = formatMatchDate(match.date)
+  const formattedTime = formatMatchTime(match.date)
   const formatOdd = (odd: number) => odd.toFixed(2)
 
   return (
@@ -33,7 +33,7 @@ export const Match = ({ match, onEdit: _onEdit, onDelete: _onDelete }: MatchProp
             </div>
           </div>
           <div className="flex flex-col items-center justify-center">
-            <p className="font-semibold text-primary text-sm whitespace-nowrap">{match.time}</p>
+            <p className="text-primary text-xs font-semibold whitespace-nowrap">{formattedTime}</p>
             <p className="text-muted text-xs whitespace-nowrap">{formattedDate}</p>
           </div>
           <div className="flex items-center gap-2">
@@ -73,23 +73,23 @@ export const Match = ({ match, onEdit: _onEdit, onDelete: _onDelete }: MatchProp
             transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             className="overflow-hidden"
           >
-            <div className="flex items-center flex-col gap-4 mt-4">
+            <div className="mt-4 flex flex-col items-center gap-4">
               {match.markets.map((market) => (
                 <div key={market.id} className="flex w-full flex-col gap-2">
-                  <h6 className="text-sm font-medium text-white">{market.name}</h6>
+                  <h6 className="text-xs font-semibold text-white">{market.name}</h6>
                   <div className="grid w-full grid-cols-2 flex-col items-start gap-2">
                     <div className="flex w-full items-center justify-between gap-3">
-                      <div className="bg-canvas flex h-12 flex-1 items-center justify-between gap-2 rounded-lg px-3">
+                      <div className="bg-canvas flex h-10 flex-1 items-center justify-between gap-2 rounded-lg px-3">
                         <p className="text-muted text-xs">Local</p>
-                        <p className="text-sm text-white font-semibold">
+                        <p className="text-xs font-semibold text-white">
                           {formatOdd(market.odds.home)}
                         </p>
                       </div>
                     </div>
                     <div className="flex w-full items-center justify-between gap-3">
-                      <div className="bg-canvas flex h-12 flex-1 items-center justify-between gap-2 rounded-lg px-3">
+                      <div className="bg-canvas flex h-10 flex-1 items-center justify-between gap-2 rounded-lg px-3">
                         <p className="text-muted text-xs">Visitante</p>
-                        <p className="text-sm text-white font-semibold">
+                        <p className="text-xs font-semibold text-white">
                           {formatOdd(market.odds.away)}
                         </p>
                       </div>

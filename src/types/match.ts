@@ -14,14 +14,20 @@ export interface IMatchMarket {
   odds: IMatchMarketOdds
 }
 
+export const MatchStatus = {
+  PENDING: 'PENDING',
+  LIVE: 'LIVE',
+  FINISHED: 'FINISHED',
+} as const
+
+export type MatchStatus = (typeof MatchStatus)[keyof typeof MatchStatus]
+
 export interface IMatch {
   id: string
   home: IMatchTeam
   away: IMatchTeam
   date: string
-  time: string
-  status: 'pending' | 'live' | 'finished'
-  result: string | null
+  status: MatchStatus
   markets: IMatchMarket[]
 }
 
@@ -29,7 +35,6 @@ export interface ICreateMatch {
   home: IMatchTeam
   away: IMatchTeam
   date: string
-  time: string
   markets: IMatchMarket[]
 }
   

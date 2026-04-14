@@ -18,3 +18,59 @@ export const formatDateValue = (value: Date | null): string => {
 
   return `${year}-${month}-${day}`
 }
+
+export const parseMatchDate = (dateValue: string): Date | null => {
+  if (!dateValue) {
+    return null
+  }
+
+  const normalizedDateValue = dateValue.includes('T') ? dateValue : `${dateValue}T00:00:00`
+  const parsedDate = new Date(normalizedDateValue)
+
+  return Number.isFinite(parsedDate.getTime()) ? parsedDate : null
+}
+
+export const formatMatchDate = (dateValue: string): string => {
+  const parsedDate = parseMatchDate(dateValue)
+  if (!parsedDate) {
+    return 'Fecha pendiente'
+  }
+
+  return new Intl.DateTimeFormat('es-ES', {
+    day: 'numeric',
+    month: 'long',
+  }).format(parsedDate)
+}
+
+export const formatMatchTime = (dateValue: string): string => {
+  const parsedDate = parseMatchDate(dateValue)
+  if (!parsedDate) {
+    return '--:--'
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  })
+    .format(parsedDate)
+    .toUpperCase()
+}
+
+export const formatMatchDateValue = (dateValue: string): string => {
+  const parsedDate = parseMatchDate(dateValue)
+
+  return parsedDate ? formatDateValue(parsedDate) : ''
+}
+
+export const formatMatchTimeValue = (dateValue: string): string => {
+  const parsedDate = parseMatchDate(dateValue)
+  if (!parsedDate) {
+    return ''
+  }
+
+  const hours = String(parsedDate.getHours()).padStart(2, '0')
+  const minutes = String(parsedDate.getMinutes()).padStart(2, '0')
+
+  return `${hours}:${minutes}`
+}
