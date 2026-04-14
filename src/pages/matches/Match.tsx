@@ -75,8 +75,9 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
         <button
           type="button"
           onClick={handleMarkAsFinished}
+          disabled={match.status === MatchStatus.FINISHED}
           aria-label="Marcar partido como finalizado"
-          className="flex w-14 cursor-pointer items-center justify-center bg-emerald-500/50 text-white"
+          className={`flex w-14 cursor-pointer items-center justify-center bg-emerald-500/50 text-white ${match.status === MatchStatus.FINISHED ? 'cursor-not-allowed opacity-50' : ''}`}
         >
           <Check size="sm" />
         </button>
