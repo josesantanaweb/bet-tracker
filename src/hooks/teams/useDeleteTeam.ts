@@ -4,7 +4,6 @@ import { teamsQueryKey } from './useTeams'
 
 import { supabase } from '@/lib/supabase'
 
-
 const parseTeamId = (teamId: string) => {
   const parsedId = Number(teamId)
 

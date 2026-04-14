@@ -27,8 +27,7 @@ const updateTeam = async (payload: IUpdateTeamPayload) => {
   const { error } = await supabase
     .from('team')
     .update({
-      name: payload.name,
-      logo: payload.logo,
+      ...payload,
     })
     .eq('id', parsedId)
 

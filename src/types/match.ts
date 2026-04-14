@@ -32,8 +32,8 @@ export interface IMatch {
 }
 
 export interface ICreateMatch {
-  home: IMatchTeam
-  away: IMatchTeam
+  homeTeamId: string
+  awayTeamId: string
   date: string
   markets: IMatchMarket[]
 }

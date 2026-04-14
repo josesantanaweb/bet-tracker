@@ -74,3 +74,14 @@ export const formatMatchTimeValue = (dateValue: string): string => {
 
   return `${hours}:${minutes}`
 }
+
+export const buildMatchDateTimeValue = (dateValue: string, timeValue: string): string => {
+  if (!dateValue || !timeValue) {
+    return ''
+  }
+
+  const normalizedTimeValue = timeValue.length === 5 ? `${timeValue}:00` : timeValue
+  const parsedDate = new Date(`${dateValue}T${normalizedTimeValue}`)
+
+  return Number.isFinite(parsedDate.getTime()) ? parsedDate.toISOString() : ''
+}

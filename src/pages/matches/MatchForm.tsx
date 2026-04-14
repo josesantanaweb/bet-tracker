@@ -6,6 +6,7 @@ import { z } from 'zod'
 import 'react-datepicker/dist/react-datepicker.css'
 
 import {
+  buildMatchDateTimeValue,
   formatDateValue,
   formatMatchDateValue,
   formatMatchTimeValue,
@@ -15,7 +16,7 @@ import {
 import type { ICreateMatch, IMatch, ITeam } from '@/types'
 
 import { Button, Input, Select } from '@/components/ui'
-import { useTeams } from '@/hooks'
+import { useTeams, useCreateMatch } from '@/hooks'
 
 const newMatchSchema = z
   .object({
@@ -59,6 +60,7 @@ interface MatchFormProps {
 
 export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
   const { data: teams = EMPTY_TEAMS, isLoading: isLoadingTeams } = useTeams()
+  const createMutation = useCreateMatch()
   const teamOptions = teams.map((team) => ({ value: team.id, label: team.name }))
 
   const {
@@ -114,16 +116,17 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
       return
     }
 
-    const _payload: ICreateMatch = {
-      home: {
-        name: homeTeam.name,
-        logo: homeTeam.logo,
-      },
-      away: {
-        name: awayTeam.name,
-        logo: awayTeam.logo,
-      },
-      date: values.date,
+    const matchDateTime = buildMatchDateTimeValue(values.date, values.time)
+
+    if (!matchDateTime) {
+      setError('date', { message: 'La fecha del partido no es valida' })
+      return
+    }
+
+    const payload: ICreateMatch = {
+      homeTeamId: homeTeam.id,
+      awayTeamId: awayTeam.id,
+      date: matchDateTime,
       markets: [
         {
           id: 'winner',
@@ -152,7 +155,7 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
       ],
     }
 
-    void _payload
+    await createMutation.mutateAsync(payload)
     reset(defaultMatchFormValues)
     onSuccess?.()
   }
@@ -283,7 +286,13 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
         </div>
       </div>
 
-      <Button type="submit">{match ? 'Guardar cambios' : 'Crear partido'}</Button>
+      <Button type="submit" disabled={createMutation.isPending}>
+        {createMutation.isPending
+          ? 'Guardando...'
+          : match
+            ? 'Guardar cambios'
+            : 'Crear partido'}
+      </Button>
     </form>
   )
 }

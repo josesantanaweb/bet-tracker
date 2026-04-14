@@ -7,11 +7,12 @@ import { MatchUpsertDialog } from './MatchUpsertDialog'
 import type { IMatch } from '@/types'
 
 import { HeaderSections, EmptyState } from '@/components/common'
-import { useDeleteTeam, useMatches } from '@/hooks'
+import { useDeleteMatch, useFinishMatch, useMatches } from '@/hooks'
 
 export const MatchesPage = () => {
   const { data: matches = [], isLoading, isError } = useMatches()
-  const { mutateAsync: deleteMatch } = useDeleteTeam()
+  const { mutateAsync: finishMatch } = useFinishMatch()
+  const { mutateAsync: deleteMatch } = useDeleteMatch()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [matchToEdit, setMatchToEdit] = useState<IMatch | null>(null)
 
@@ -22,11 +23,19 @@ export const MatchesPage = () => {
 
   const handleEditMatch = (_match: IMatch) => {}
 
+  const handleFinishMatch = async (match: IMatch) => {
+    try {
+      await finishMatch(match.id)
+    } catch {
+      console.error('Error al finalizar el partido')
+    }
+  }
+
   const handleDeleteMatch = async (match: IMatch) => {
     try {
       await deleteMatch(match.id)
     } catch {
-      console.error('Error al eliminar el equipo')
+      console.error('Error al eliminar el partido')
     }
   }
 
@@ -60,6 +69,7 @@ export const MatchesPage = () => {
         <Matches
           matches={matches}
           onEditMatch={handleEditMatch}
+          onFinishMatch={handleFinishMatch}
           onDeleteMatch={handleDeleteMatch}
         />
       )}

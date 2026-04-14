@@ -8,10 +8,7 @@ import { supabase } from '@/lib/supabase'
 
 const createTeam = async (payload: ICreateTeam) => {
   const { error } = await supabase.from('team').insert({
-    name: payload.name,
-    logo: payload.logo,
-    won: 0,
-    lost: 0,
+    ...payload,
   })
 
   if (error) {
