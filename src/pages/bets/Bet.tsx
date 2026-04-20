@@ -1,5 +1,7 @@
 import { Football } from '@boxicons/react'
 
+import { formatAmount } from './betUtils'
+
 import { DropdownActions } from '@/components/common'
 import { Badge } from '@/components/ui'
 import { type IBet } from '@/types'
@@ -9,8 +11,6 @@ interface BetProps {
   onEdit: () => void
   onDelete: () => void
 }
-
-const formatAmount = (amount: number) => `$${amount.toFixed(2)}`
 
 export const Bet = ({ bet, onEdit, onDelete }: BetProps) => {
   return (
