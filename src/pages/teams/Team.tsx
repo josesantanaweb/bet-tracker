@@ -1,6 +1,6 @@
 import { Trophy, TrendingDown } from '@boxicons/react'
 
-import { DropdownActions } from '@components/common/DropdownActions'
+import { DropdownActions } from '@components/common'
 
 import type { ITeam } from '@/types'
 

@@ -27,6 +27,23 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
   const formattedTime = formatMatchTime(match.date)
   const formatOdd = (odd: number) => odd.toFixed(2)
 
+  const handleToggleDetails = () => {
+    setIsOpen((open) => {
+      const nextIsOpen = !open
+
+      if (nextIsOpen) {
+        setIsDeleteRevealed(false)
+        animate(swipeX, 0, {
+          type: 'spring',
+          stiffness: 420,
+          damping: 34,
+        })
+      }
+
+      return nextIsOpen
+    })
+  }
+
   const handleDragEnd = (
     _event: MouseEvent | TouchEvent | PointerEvent,
     info: { offset: { x: number }; velocity: { x: number } },
@@ -69,7 +86,7 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
   return (
     <div className="relative overflow-hidden rounded-xl">
       <motion.div
-        className={`absolute top-0 left-0 flex h-full w-28 ${isDeleteRevealed ? 'pointer-events-auto' : 'pointer-events-none'}`}
+        className={`absolute top-0 left-0 flex h-full w-28 ${isDeleteRevealed && !isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
         style={{ opacity: deleteOpacity, scale: deleteScale }}
       >
         <button
@@ -92,7 +109,7 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
       </motion.div>
 
       <motion.div
-        drag="x"
+        drag={isOpen ? false : 'x'}
         dragDirectionLock
         dragConstraints={{ left: 0, right: SWIPE_REVEAL_WIDTH }}
         dragElastic={0.06}
@@ -101,7 +118,7 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
         style={{ x: swipeX, touchAction: 'pan-y' }}
         className={`bg-secondary-dark relative flex flex-col p-4 ${isDeleteRevealed ? 'rounded-r-xl' : 'rounded-xl'}`}
       >
-        <div className="flex w-full items-center justify-between">
+        <div className={`flex w-full items-center justify-between ${isOpen ? 'border-b border-secondary/50 pb-3' : ''}`}>
           <div className="flex w-full items-center justify-center gap-3">
             <div className="flex items-center gap-2">
               <h6 className="w-20 truncate text-sm text-white">{match.home.name}</h6>
@@ -135,7 +152,7 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setIsOpen((open) => !open)}
+              onClick={handleToggleDetails}
               className="bg-secondary shrink-0 cursor-pointer rounded-md p-1.5 transition-colors hover:opacity-90"
               aria-expanded={isOpen}
               aria-label={isOpen ? 'Ocultar detalles del partido' : 'Ver detalles del partido'}

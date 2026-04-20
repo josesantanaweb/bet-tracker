@@ -130,7 +130,7 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
       markets: [
         {
           id: 'winner',
-          name: 'Ganador',
+          name: '1X2',
           odds: {
             home: values.winnerHome,
             away: values.winnerAway,
@@ -238,7 +238,7 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
       </div>
 
       <div className="flex w-full flex-col gap-3">
-        <h6 className="text-xs font-medium text-white">Ganador</h6>
+        <h6 className="text-xs font-medium text-white">1X2</h6>
         <div className="flex items-center gap-3">
           <Input type="number" step="0.01" placeholder="Cuota local" {...register('winnerHome')} />
           <Input
