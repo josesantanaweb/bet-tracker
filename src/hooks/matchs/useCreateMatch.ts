@@ -17,20 +17,52 @@ const parseTeamId = (teamId: string) => {
   return parsedId
 }
 
+const parseMarketId = (marketId: string) => {
+  const parsedId = Number(marketId)
+
+  if (!Number.isFinite(parsedId)) {
+    throw new Error('El id del mercado no es valido')
+  }
+
+  return parsedId
+}
+
 const createMatch = async (payload: ICreateMatch) => {
   const homeTeamId = parseTeamId(payload.homeTeamId)
   const awayTeamId = parseTeamId(payload.awayTeamId)
 
-  const { error } = await supabase.from('match').insert({
-    date: payload.date,
-    markets: payload.markets,
-    home_team_id: homeTeamId,
-    away_team_id: awayTeamId,
-    status: MatchStatus.PENDING,
-  })
+  const { data: createdMatch, error: createMatchError } = await supabase
+    .from('match')
+    .insert({
+      date: payload.date,
+      home_team_id: homeTeamId,
+      away_team_id: awayTeamId,
+      status: MatchStatus.PENDING,
+    })
+    .select('id')
+    .single()
 
-  if (error) {
-    throw error
+  if (createMatchError) {
+    throw createMatchError
+  }
+
+  const matchId = createdMatch?.id
+
+  if (!matchId) {
+    throw new Error('No se pudo obtener el id del partido creado')
+  }
+
+  const rows = payload.matchMarkets.map((market) => ({
+    match_id: matchId,
+    market_id: parseMarketId(market.marketId),
+    odd_home: market.oddHome,
+    odd_away: market.oddAway,
+  }))
+
+  const { error: createMatchMarketsError } = await supabase.from('match_market').insert(rows)
+
+  if (createMatchMarketsError) {
+    throw createMatchMarketsError
   }
 }
 

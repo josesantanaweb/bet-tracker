@@ -85,3 +85,5 @@ export const buildMatchDateTimeValue = (dateValue: string, timeValue: string): s
 
   return Number.isFinite(parsedDate.getTime()) ? parsedDate.toISOString() : ''
 }
+
+export const formatAmount = (amount: number) => `$${amount.toFixed(2)}`

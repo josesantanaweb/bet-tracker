@@ -2,8 +2,7 @@ import { Check, ChevronDown, Trash } from '@boxicons/react'
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'framer-motion'
 import { useState } from 'react'
 
-import { formatMatchDate, formatMatchTime } from './dateUtils'
-
+import { formatMatchDate, formatMatchTime } from '@/lib/format'
 import { MatchStatus, type IMatch } from '@/types'
 
 interface MatchProps {
@@ -19,10 +18,10 @@ const SWIPE_VELOCITY_THRESHOLD = 550
 
 export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [isDeleteRevealed, setIsDeleteRevealed] = useState(false)
+  const [isActionsRevealed, setIsActionsRevealed] = useState(false)
   const swipeX = useMotionValue(0)
-  const deleteOpacity = useTransform(swipeX, [0, 14, SWIPE_REVEAL_WIDTH], [0, 0.5, 1])
-  const deleteScale = useTransform(swipeX, [0, SWIPE_REVEAL_WIDTH], [0.9, 1])
+  const actionsOpacity = useTransform(swipeX, [0, 14, SWIPE_REVEAL_WIDTH], [0, 0.5, 1])
+  const actionsScale = useTransform(swipeX, [0, SWIPE_REVEAL_WIDTH], [0.9, 1])
   const formattedDate = formatMatchDate(match.date)
   const formattedTime = formatMatchTime(match.date)
   const formatOdd = (odd: number) => odd.toFixed(2)
@@ -32,7 +31,7 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
       const nextIsOpen = !open
 
       if (nextIsOpen) {
-        setIsDeleteRevealed(false)
+        setIsActionsRevealed(false)
         animate(swipeX, 0, {
           type: 'spring',
           stiffness: 420,
@@ -52,7 +51,7 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
       info.offset.x > SWIPE_OPEN_THRESHOLD || info.velocity.x > SWIPE_VELOCITY_THRESHOLD
 
     const nextX = shouldOpen ? SWIPE_REVEAL_WIDTH : 0
-    setIsDeleteRevealed(shouldOpen)
+    setIsActionsRevealed(shouldOpen)
     animate(swipeX, nextX, {
       type: 'spring',
       stiffness: 420,
@@ -62,7 +61,7 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
 
   const handleDelete = () => {
     onDelete()
-    setIsDeleteRevealed(false)
+    setIsActionsRevealed(false)
     animate(swipeX, 0, {
       type: 'spring',
       stiffness: 420,
@@ -75,7 +74,7 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
       onFinish()
     }
 
-    setIsDeleteRevealed(false)
+    setIsActionsRevealed(false)
     animate(swipeX, 0, {
       type: 'spring',
       stiffness: 420,
@@ -86,8 +85,8 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
   return (
     <div className="relative overflow-hidden rounded-xl">
       <motion.div
-        className={`absolute top-0 left-0 flex h-full w-28 ${isDeleteRevealed && !isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
-        style={{ opacity: deleteOpacity, scale: deleteScale }}
+        className={`absolute top-0 left-0 flex h-full w-28 ${isActionsRevealed && !isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
+        style={{ opacity: actionsOpacity, scale: actionsScale }}
       >
         <button
           type="button"
@@ -116,7 +115,7 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
         dragMomentum={false}
         onDragEnd={handleDragEnd}
         style={{ x: swipeX, touchAction: 'pan-y' }}
-        className={`bg-secondary-dark relative flex flex-col p-4 ${isDeleteRevealed ? 'rounded-r-xl' : 'rounded-xl'}`}
+        className={`bg-secondary-dark relative flex flex-col p-4 ${isActionsRevealed ? 'rounded-r-xl' : 'rounded-xl'}`}
       >
         <div className={`flex w-full items-center justify-between ${isOpen ? 'border-b border-secondary/50 pb-3' : ''}`}>
           <div className="flex w-full items-center justify-center gap-3">
@@ -178,7 +177,7 @@ export const Match = ({ match, onEdit: _onEdit, onFinish, onDelete }: MatchProps
               className="overflow-hidden"
             >
               <div className="mt-4 flex flex-col items-center gap-4">
-                {match.markets.map((market) => (
+                {match.matchMarkets.map((market) => (
                   <div key={market.id} className="flex w-full flex-col gap-2">
                     <h6 className="text-xs font-semibold text-white">{market.name}</h6>
                     <div className="grid w-full grid-cols-2 flex-col items-start gap-2">

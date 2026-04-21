@@ -1,22 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import DatePicker from 'react-datepicker'
-import { Controller, type Resolver, useForm } from 'react-hook-form'
+import { Controller, type Resolver, useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import 'react-datepicker/dist/react-datepicker.css'
 
+import type { ICreateMatch, IMarket, IMatch, ITeam } from '@/types'
+
+import { Button, Input, Select } from '@/components/ui'
+import { useCreateMatch, useMarkets, useTeams } from '@/hooks'
 import {
   buildMatchDateTimeValue,
   formatDateValue,
   formatMatchDateValue,
   formatMatchTimeValue,
   parseDateValue,
-} from './dateUtils'
-
-import type { ICreateMatch, IMatch, ITeam } from '@/types'
-
-import { Button, Input, Select } from '@/components/ui'
-import { useTeams, useCreateMatch } from '@/hooks'
+} from '@/lib/format'
 
 const newMatchSchema = z
   .object({
@@ -24,12 +23,14 @@ const newMatchSchema = z
     time: z.string().min(1, 'Ingresa la hora del partido'),
     homeTeamId: z.string().min(1, 'Selecciona el equipo local'),
     awayTeamId: z.string().min(1, 'Selecciona el equipo visitante'),
-    winnerHome: z.coerce.number().positive('Cuota invalida'),
-    winnerAway: z.coerce.number().positive('Cuota invalida'),
-    teamWinHalfHome: z.coerce.number().positive('Cuota invalida'),
-    teamWinHalfAway: z.coerce.number().positive('Cuota invalida'),
-    teamScoreHalfHome: z.coerce.number().positive('Cuota invalida'),
-    teamScoreHalfAway: z.coerce.number().positive('Cuota invalida'),
+    matchMarkets: z.array(
+      z.object({
+        marketId: z.string().min(1),
+        marketName: z.string().min(1),
+        oddHome: z.coerce.number().positive('Cuota local invalida'),
+        oddAway: z.coerce.number().positive('Cuota visitante invalida'),
+      }),
+    ),
   })
   .refine((values) => values.homeTeamId !== values.awayTeamId, {
     message: 'Local y visitante deben ser equipos diferentes',
@@ -39,18 +40,27 @@ const newMatchSchema = z
 type MatchFormValues = z.infer<typeof newMatchSchema>
 
 const EMPTY_TEAMS: ITeam[] = []
+const EMPTY_MARKETS: IMarket[] = []
 
 const defaultMatchFormValues: MatchFormValues = {
   date: '',
   time: '',
   homeTeamId: '',
   awayTeamId: '',
-  winnerHome: 1.5,
-  winnerAway: 1.5,
-  teamWinHalfHome: 1.5,
-  teamWinHalfAway: 1.5,
-  teamScoreHalfHome: 1.5,
-  teamScoreHalfAway: 1.5,
+  matchMarkets: [],
+}
+
+const buildMarketFormRows = (markets: IMarket[], match?: IMatch) => {
+  return markets.map((market) => {
+    const existingMarket = match?.matchMarkets.find((item) => item.id === market.id)
+
+    return {
+      marketId: market.id,
+      marketName: market.name,
+      oddHome: existingMarket?.odds.home ?? 1.5,
+      oddAway: existingMarket?.odds.away ?? 1.5,
+    }
+  })
 }
 
 interface MatchFormProps {
@@ -60,6 +70,7 @@ interface MatchFormProps {
 
 export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
   const { data: teams = EMPTY_TEAMS, isLoading: isLoadingTeams } = useTeams()
+  const { data: markets = EMPTY_MARKETS } = useMarkets()
   const createMutation = useCreateMatch()
   const teamOptions = teams.map((team) => ({ value: team.id, label: team.name }))
 
@@ -75,14 +86,12 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
     defaultValues: defaultMatchFormValues,
   })
 
+  const watchedMarkets = useWatch({ control, name: 'matchMarkets' }) ?? []
+
   useEffect(() => {
     if (match) {
       const homeTeam = teams.find((team) => team.name === match.home.name)
       const awayTeam = teams.find((team) => team.name === match.away.name)
-
-      const winner = match.markets.find((market) => market.id === 'winner')
-      const teamWinHalf = match.markets.find((market) => market.id === 'team-win-half')
-      const teamScoreHalf = match.markets.find((market) => market.id === 'team-score-over-05')
 
       reset({
         ...defaultMatchFormValues,
@@ -90,17 +99,15 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
         time: formatMatchTimeValue(match.date),
         homeTeamId: homeTeam?.id ?? '',
         awayTeamId: awayTeam?.id ?? '',
-        winnerHome: winner?.odds.home ?? 1.5,
-        winnerAway: winner?.odds.away ?? 1.5,
-        teamWinHalfHome: teamWinHalf?.odds.home ?? 1.5,
-        teamWinHalfAway: teamWinHalf?.odds.away ?? 1.5,
-        teamScoreHalfHome: teamScoreHalf?.odds.home ?? 1.5,
-        teamScoreHalfAway: teamScoreHalf?.odds.away ?? 1.5,
+        matchMarkets: buildMarketFormRows(markets, match),
       })
     } else {
-      reset(defaultMatchFormValues)
+      reset({
+        ...defaultMatchFormValues,
+        matchMarkets: buildMarketFormRows(markets),
+      })
     }
-  }, [match, reset, teams])
+  }, [match, markets, reset, teams])
 
   const onSubmit = async (values: MatchFormValues) => {
     const homeTeam = teams.find((team) => team.id === values.homeTeamId)
@@ -127,36 +134,18 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
       homeTeamId: homeTeam.id,
       awayTeamId: awayTeam.id,
       date: matchDateTime,
-      markets: [
-        {
-          id: 'winner',
-          name: '1X2',
-          odds: {
-            home: values.winnerHome,
-            away: values.winnerAway,
-          },
-        },
-        {
-          id: 'team-win-half',
-          name: 'Equipo ganara al menos una mitad',
-          odds: {
-            home: values.teamWinHalfHome,
-            away: values.teamWinHalfAway,
-          },
-        },
-        {
-          id: 'team-score-over-05',
-          name: 'Equipo hara +0.5 goles',
-          odds: {
-            home: values.teamScoreHalfHome,
-            away: values.teamScoreHalfAway,
-          },
-        },
-      ],
+      matchMarkets: values.matchMarkets.map((market) => ({
+        marketId: market.marketId,
+        oddHome: market.oddHome,
+        oddAway: market.oddAway,
+      })),
     }
 
     await createMutation.mutateAsync(payload)
-    reset(defaultMatchFormValues)
+    reset({
+      ...defaultMatchFormValues,
+      matchMarkets: buildMarketFormRows(markets),
+    })
     onSuccess?.()
   }
 
@@ -237,54 +226,37 @@ export const MatchForm = ({ match, onSuccess }: MatchFormProps) => {
         </div>
       </div>
 
-      <div className="flex w-full flex-col gap-3">
-        <h6 className="text-xs font-medium text-white">1X2</h6>
-        <div className="flex items-center gap-3">
-          <Input type="number" step="0.01" placeholder="Cuota local" {...register('winnerHome')} />
-          <Input
-            type="number"
-            step="0.01"
-            placeholder="Cuota visitante"
-            {...register('winnerAway')}
-          />
+      {watchedMarkets.map((market, index) => (
+        <div key={market.marketId} className="flex w-full flex-col gap-3">
+          <Input type="hidden" {...register(`matchMarkets.${index}.marketId`)} />
+          <Input type="hidden" {...register(`matchMarkets.${index}.marketName`)} />
+          <h6 className="text-xs font-medium text-white">{market.marketName}</h6>
+          <div className="flex items-center gap-3">
+            <div className="w-full">
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="Cuota local"
+                {...register(`matchMarkets.${index}.oddHome`)}
+              />
+              {errors.matchMarkets?.[index]?.oddHome && (
+                <p className="pt-1 text-xs text-red-500">{errors.matchMarkets[index]?.oddHome?.message}</p>
+              )}
+            </div>
+            <div className="w-full">
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="Cuota visitante"
+                {...register(`matchMarkets.${index}.oddAway`)}
+              />
+              {errors.matchMarkets?.[index]?.oddAway && (
+                <p className="pt-1 text-xs text-red-500">{errors.matchMarkets[index]?.oddAway?.message}</p>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="flex w-full flex-col gap-3">
-        <h6 className="text-xs font-medium text-white">Equipo ganara al menos una mitad</h6>
-        <div className="flex items-center gap-3">
-          <Input
-            type="number"
-            step="0.01"
-            placeholder="Cuota local"
-            {...register('teamWinHalfHome')}
-          />
-          <Input
-            type="number"
-            step="0.01"
-            placeholder="Cuota visitante"
-            {...register('teamWinHalfAway')}
-          />
-        </div>
-      </div>
-
-      <div className="flex w-full flex-col gap-3">
-        <h6 className="text-xs font-medium text-white">Equipo hara +0.5 goles</h6>
-        <div className="flex items-center gap-3">
-          <Input
-            type="number"
-            step="0.01"
-            placeholder="Cuota local"
-            {...register('teamScoreHalfHome')}
-          />
-          <Input
-            type="number"
-            step="0.01"
-            placeholder="Cuota visitante"
-            {...register('teamScoreHalfAway')}
-          />
-        </div>
-      </div>
+      ))}
 
       <Button type="submit" disabled={createMutation.isPending}>
         {createMutation.isPending

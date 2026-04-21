@@ -14,6 +14,12 @@ export interface IMatchMarket {
   odds: IMatchMarketOdds
 }
 
+export interface ICreateMatchMarket {
+  marketId: string
+  oddHome: number
+  oddAway: number
+}
+
 export const MatchStatus = {
   PENDING: 'PENDING',
   LIVE: 'LIVE',
@@ -28,13 +34,13 @@ export interface IMatch {
   away: IMatchTeam
   date: string
   status: MatchStatus
-  markets: IMatchMarket[]
+  matchMarkets: IMatchMarket[]
 }
 
 export interface ICreateMatch {
   homeTeamId: string
   awayTeamId: string
   date: string
-  markets: IMatchMarket[]
+  matchMarkets: ICreateMatchMarket[]
 }
   
