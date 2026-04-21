@@ -2,17 +2,21 @@ import { Trophy, TrendingDown } from '@boxicons/react'
 
 import { DropdownActions } from '@components/common'
 
+import { TeamFavoriteButton } from './TeamFavoriteButton'
+
 import type { ITeam } from '@/types'
 
 interface TeamProps {
   team: ITeam
   onEdit: () => void
   onDelete: () => void
+  onFavorite: () => void
 }
 
-export const Team = ({ team, onEdit, onDelete }: TeamProps) => {
+export const Team = ({ team, onEdit, onDelete, onFavorite }: TeamProps) => {
   return (
     <div className="bg-secondary-dark relative flex items-center justify-between rounded-xl p-4">
+      <TeamFavoriteButton isFavorite={team.isFavorite ?? false} onClick={onFavorite} />
       <div className="absolute top-2 right-1">
         <DropdownActions onEdit={onEdit} onDelete={onDelete} />
       </div>

@@ -2,14 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { teamsQueryKey } from './useTeams'
 
-import type { ICreateTeam } from '@/types'
+import type { IUpdateTeam } from '@/types'
 
 import { supabase } from '@/lib/supabase'
-
-
-interface IUpdateTeamPayload extends ICreateTeam {
-  id: string
-}
 
 const parseTeamId = (teamId: string) => {
   const parsedId = Number(teamId)
@@ -21,14 +16,27 @@ const parseTeamId = (teamId: string) => {
   return parsedId
 }
 
-const updateTeam = async (payload: IUpdateTeamPayload) => {
+const updateTeam = async (payload: IUpdateTeam) => {
   const parsedId = parseTeamId(payload.id)
+  const { id: _id, name, logo, isFavorite } = payload
+
+  const updates: Record<string, string | boolean> = {}
+
+  if (typeof name === 'string') {
+    updates.name = name
+  }
+
+  if (typeof logo === 'string') {
+    updates.logo = logo
+  }
+
+  if (typeof isFavorite === 'boolean') {
+    updates.is_favorite = isFavorite
+  }
 
   const { error } = await supabase
     .from('team')
-    .update({
-      ...payload,
-    })
+    .update(updates)
     .eq('id', parsedId)
 
   if (error) {

@@ -9,7 +9,8 @@ export const teamsQueryKey = ['teams']
 const fetchTeams = async (): Promise<ITeam[]> => {
   const { data, error } = await supabase
     .from('team')
-    .select('id, name, logo, won, lost')
+    .select('id, name, logo, won, lost, is_favorite')
+    .order('is_favorite', { ascending: false })
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -26,6 +27,7 @@ const fetchTeams = async (): Promise<ITeam[]> => {
       logo: team.logo ?? '',
       won,
       lost,
+      isFavorite: Boolean(team.is_favorite),
     }
   })
 }

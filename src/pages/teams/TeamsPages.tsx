@@ -2,18 +2,24 @@ import { useState } from 'react'
 
 import { Teams } from './Teams'
 import { TeamsSkeleton } from './TeamsSkeleton'
+import { TeamsTabs, type TeamsTabKey } from './TeamsTabs'
 import { TeamUpsertDialog } from './TeamUpsertDialog'
 
 import type { ITeam } from '@/types'
 
 import { HeaderSections, EmptyState } from '@/components/common'
-import { useDeleteTeam, useTeams } from '@/hooks'
+import { useDeleteTeam, useTeams, useUpdateTeam } from '@/hooks'
 
 export const TeamsPage = () => {
   const { data: teams = [], isLoading, isError } = useTeams()
   const { mutateAsync: deleteTeam } = useDeleteTeam()
+  const { mutateAsync: updateTeam } = useUpdateTeam()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<ITeam | null>(null)
+  const [activeTab, setActiveTab] = useState<TeamsTabKey>('all')
+
+  const favoriteTeams = teams.filter((team) => team.isFavorite)
+  const visibleTeams = activeTab === 'favorites' ? favoriteTeams : teams
 
   const handleAdd = () => {
     setTeamToEdit(null)
@@ -23,6 +29,12 @@ export const TeamsPage = () => {
   const handleEditTeam = (team: ITeam) => {
     setTeamToEdit(team)
     setIsDialogOpen(true)
+  }
+
+  const handleFavoriteTeam = (team: ITeam) => {
+    updateTeam({ id: team.id, isFavorite: !team.isFavorite }).catch(() => {
+      console.error('Error al actualizar favorito del equipo')
+    })
   }
 
   const handleDialogOpenChange = (open: boolean) => {
@@ -56,7 +68,25 @@ export const TeamsPage = () => {
         <EmptyState text="Agrega tu primer equipo" />
       )}
       {!isLoading && !isError && teams.length > 0 && (
-        <Teams teams={teams} onEditTeam={handleEditTeam} onDeleteTeam={handleDeleteTeam} />
+        <div className="flex flex-col w-full py-8 gap-5">
+          <TeamsTabs
+            activeTab={activeTab}
+            allCount={teams.length}
+            favoritesCount={favoriteTeams.length}
+            onTabChange={setActiveTab}
+          />
+          {visibleTeams.length > 0 ? (
+            <Teams
+              teams={visibleTeams}
+              activeTab={activeTab}
+              onEditTeam={handleEditTeam}
+              onDeleteTeam={handleDeleteTeam}
+              onFavoriteTeam={handleFavoriteTeam}
+            />
+          ) : (
+            <EmptyState text="No tienes equipos favoritos" />
+          )}
+        </div>
       )}
     </div>
   )
