@@ -1,11 +1,11 @@
-import { Community, Dashboard } from '@boxicons/react'
+import { Dashboard, Football, Calendar, Dollar } from '@boxicons/react'
 import { NavLink } from 'react-router-dom'
 
 const tabs = [
   { to: '/', icon: Dashboard, label: 'Dashboard' },
-  { to: '/teams', icon: Community, label: 'Equipos' },
-  { to: '/matches', icon: Community, label: 'Partidos' },
-  { to: '/bets', icon: Community, label: 'Apuestas' },
+  { to: '/matches', icon: Calendar, label: 'Partidos' },
+  { to: '/bets', icon: Dollar, label: 'Apuestas' },
+  { to: '/teams', icon: Football, label: 'Equipos' },
 ]
 
 export const BottomNav = () => {

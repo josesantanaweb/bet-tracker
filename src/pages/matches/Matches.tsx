@@ -11,7 +11,7 @@ interface MatchesProps {
 
 export const Matches = ({ matches, onEditMatch, onFinishMatch, onDeleteMatch }: MatchesProps) => {
   return (
-    <div className="grid grid-cols-1 items-center gap-3 py-8">
+    <div className="grid grid-cols-1 items-center gap-3">
       {matches.map((match) => (
         <Match
           key={match.id}

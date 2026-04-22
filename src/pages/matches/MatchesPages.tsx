@@ -1,6 +1,8 @@
+import { isSameDay, isValid, parseISO, startOfToday } from 'date-fns'
 import { useState } from 'react'
 
 import { Matches } from './Matches'
+import { MatchesCalendar } from './MatchesCalendar'
 import { MatchesSkeleton } from './MatchesSkeleton'
 import { MatchUpsertDialog } from './MatchUpsertDialog'
 
@@ -15,6 +17,17 @@ export const MatchesPage = () => {
   const { mutateAsync: deleteMatch } = useDeleteMatch()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [matchToEdit, setMatchToEdit] = useState<IMatch | null>(null)
+  const [selectedDate, setSelectedDate] = useState(startOfToday())
+
+  const filteredMatches = matches.filter((match) => {
+    const parsedDate = parseISO(match.date)
+
+    if (!isValid(parsedDate)) {
+      return false
+    }
+
+    return isSameDay(parsedDate, selectedDate)
+  })
 
   const handleAdd = () => {
     setMatchToEdit(null)
@@ -47,7 +60,7 @@ export const MatchesPage = () => {
   }
 
   return (
-    <div className="animate-fade-in flex flex-col">
+    <div className="animate-fade-in flex flex-col gap-4">
       <HeaderSections
         title="Partidos"
         description={`${matches.length} partidos`}
@@ -58,20 +71,7 @@ export const MatchesPage = () => {
         onOpenChange={handleDialogOpenChange}
         match={matchToEdit}
       />
-      <div className="flex items-center justify-center w-full">
-        <div className="flex flex-col justify-center items-center px-3 border-b border-secondary/50 py-2 cursor-pointer">
-          <p className="text-xs text-primary/50 font-semibold">Mar</p>
-          <p className="text-xs text-muted/50">22 Abril</p>
-        </div>
-        <div className="flex flex-col justify-center items-center px-3 border-b border-primary py-2 cursor-pointer">
-          <p className="text-xs text-primary font-semibold">Today</p>
-          <p className="text-xs text-muted">23 Abril</p>
-        </div>
-        <div className="flex flex-col justify-center items-center px-3 border-b border-secondary/50 py-2 cursor-pointer">
-          <p className="text-xs text-primary font-semibold">Jue</p>
-          <p className="text-xs text-muted">24 Abril</p>
-        </div>
-      </div>
+      <MatchesCalendar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
       {isLoading && <MatchesSkeleton />}
       {!isLoading && isError && (
         <p className="py-8 text-sm text-red-500">No se pudieron cargar los partidos.</p>
@@ -79,9 +79,12 @@ export const MatchesPage = () => {
       {!isLoading && !isError && matches.length === 0 && (
         <EmptyState text="Agrega tu primer partido" />
       )}
-      {!isLoading && !isError && matches.length > 0 && (
+      {!isLoading && !isError && matches.length > 0 && filteredMatches.length === 0 && (
+        <EmptyState text="No hay partidos para la fecha seleccionada" />
+      )}
+      {!isLoading && !isError && filteredMatches.length > 0 && (
         <Matches
-          matches={matches}
+          matches={filteredMatches}
           onEditMatch={handleEditMatch}
           onFinishMatch={handleFinishMatch}
           onDeleteMatch={handleDeleteMatch}

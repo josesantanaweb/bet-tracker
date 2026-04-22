@@ -1,10 +1,27 @@
+import { format, isValid, parse, parseISO } from 'date-fns'
+import { es } from 'date-fns/locale'
+
+const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1)
+
+const parseMatchDateSafe = (dateValue: string): Date | null => {
+  if (!dateValue) {
+    return null
+  }
+
+  const normalizedDateValue = dateValue.includes('T') ? dateValue : `${dateValue}T00:00:00`
+  const parsedDate = parseISO(normalizedDateValue)
+
+  return isValid(parsedDate) ? parsedDate : null
+}
+
 export const parseDateValue = (value: string): Date | null => {
   if (!value) {
     return null
   }
 
-  const [year, month, day] = value.split('-').map(Number)
-  return new Date(year, month - 1, day)
+  const parsedDate = parse(value, 'yyyy-MM-dd', new Date())
+
+  return isValid(parsedDate) ? parsedDate : null
 }
 
 export const formatDateValue = (value: Date | null): string => {
@@ -12,67 +29,40 @@ export const formatDateValue = (value: Date | null): string => {
     return ''
   }
 
-  const year = value.getFullYear()
-  const month = String(value.getMonth() + 1).padStart(2, '0')
-  const day = String(value.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day}`
-}
-
-export const parseMatchDate = (dateValue: string): Date | null => {
-  if (!dateValue) {
-    return null
-  }
-
-  const normalizedDateValue = dateValue.includes('T') ? dateValue : `${dateValue}T00:00:00`
-  const parsedDate = new Date(normalizedDateValue)
-
-  return Number.isFinite(parsedDate.getTime()) ? parsedDate : null
+  return format(value, 'yyyy-MM-dd')
 }
 
 export const formatMatchDate = (dateValue: string): string => {
-  const parsedDate = parseMatchDate(dateValue)
+  const parsedDate = parseMatchDateSafe(dateValue)
   if (!parsedDate) {
     return 'Fecha pendiente'
   }
 
-  return new Intl.DateTimeFormat('es-ES', {
-    day: 'numeric',
-    month: 'long',
-  }).format(parsedDate)
+  return capitalize(format(parsedDate, 'd MMMM', { locale: es }))
 }
 
 export const formatMatchTime = (dateValue: string): string => {
-  const parsedDate = parseMatchDate(dateValue)
+  const parsedDate = parseMatchDateSafe(dateValue)
   if (!parsedDate) {
     return '--:--'
   }
 
-  return new Intl.DateTimeFormat('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  })
-    .format(parsedDate)
-    .toUpperCase()
+  return format(parsedDate, 'hh:mm a').toUpperCase()
 }
 
 export const formatMatchDateValue = (dateValue: string): string => {
-  const parsedDate = parseMatchDate(dateValue)
+  const parsedDate = parseMatchDateSafe(dateValue)
 
   return parsedDate ? formatDateValue(parsedDate) : ''
 }
 
 export const formatMatchTimeValue = (dateValue: string): string => {
-  const parsedDate = parseMatchDate(dateValue)
+  const parsedDate = parseMatchDateSafe(dateValue)
   if (!parsedDate) {
     return ''
   }
 
-  const hours = String(parsedDate.getHours()).padStart(2, '0')
-  const minutes = String(parsedDate.getMinutes()).padStart(2, '0')
-
-  return `${hours}:${minutes}`
+  return format(parsedDate, 'HH:mm')
 }
 
 export const buildMatchDateTimeValue = (dateValue: string, timeValue: string): string => {
@@ -81,9 +71,9 @@ export const buildMatchDateTimeValue = (dateValue: string, timeValue: string): s
   }
 
   const normalizedTimeValue = timeValue.length === 5 ? `${timeValue}:00` : timeValue
-  const parsedDate = new Date(`${dateValue}T${normalizedTimeValue}`)
+  const parsedDate = parseISO(`${dateValue}T${normalizedTimeValue}`)
 
-  return Number.isFinite(parsedDate.getTime()) ? parsedDate.toISOString() : ''
+  return isValid(parsedDate) ? parsedDate.toISOString() : ''
 }
 
 export const formatAmount = (amount: number) => `$${amount.toFixed(2)}`
