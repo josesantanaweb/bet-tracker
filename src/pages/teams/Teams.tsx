@@ -13,6 +13,7 @@ interface TeamsProps {
 }
 
 export const Teams = ({ teams, activeTab, onEditTeam, onDeleteTeam, onFavoriteTeam }: TeamsProps) => {
+
   return (
     <motion.div
       key={activeTab}
